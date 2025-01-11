@@ -16,12 +16,15 @@
 import argparse
 import binascii
 import json
-import msvcrt
+import os
 
 
 def pause(str: str):
     print(str)
-    msvcrt.getch()
+    if os.name == "nt":
+        import msvcrt
+
+        msvcrt.getch()
 
 
 def str2bool(v: str | bool):
