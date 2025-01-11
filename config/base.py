@@ -28,7 +28,8 @@ CONFIG_FILE = "./config.yaml"
 
 
 class EnigmataConfig:
-    DATA_PATH = os.path.join(os.getenv("TEMP"), "Enigmata")
+    tmp_dir = os.getenv("TEMP" if os.name == "nt" else "TMPDIR", "/tmp")
+    DATA_PATH = os.path.join(tmp_dir, "Enigmata")
     WORK_PATH = os.path.join(DATA_PATH, "output")
     VANILLAS_PATH = ""
     LOG_PATH = ""

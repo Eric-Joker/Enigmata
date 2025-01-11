@@ -92,7 +92,7 @@ def main():
     except Exception as e:
         logger.exception(e)
     finally:
-        if os.getenv("TEMP") in cfg.data_path:
+        if cfg.tmp_dir in cfg.data_path:
             input("Press any key to clean up temp files and exit.")
             shutil.rmtree(cfg.data_path)
 
