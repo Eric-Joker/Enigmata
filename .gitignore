@@ -1,0 +1,7 @@
+.*
+!.gitignore
+__pycache__
+output
+logs
+test*
+//config.yaml

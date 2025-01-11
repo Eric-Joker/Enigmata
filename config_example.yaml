@@ -1,0 +1,160 @@
+# for storing vanilla data
+data_path: '.\data'
+# for output results
+work_path: '.\output'
+vanillas_path: ''
+# Specify the extracted vanilla data. If it is an empty string, it will attempt to select automatically.
+# vanilla_data: 
+
+log:
+  file: false
+  console: true
+  path: '.\logs'
+
+packs:
+  # for resource packs that need to be obfuscated
+  # If you need to use the PNG compression feature, please ensure the path does not contain non-ASCII characters.
+  path: 
+    - ''
+  # The final packaged file name must correspond to the path one-to-one.
+  # If it is an empty string, it will not be automatically packaged.
+  zip_name: 
+    - ''
+  # Provide a unique namespace for obfuscation, which must correspond to the path one-to-one.
+  namespace: 
+    - rhp
+  # Files under the RP directory that do not belong to the RP.
+  excluded_files:
+    - '.git/**'
+    - '.git*'
+    - '.mc*'
+    - 'LICENSE'
+    - 'README.md'
+  # Modify `manifest.json`, the values here must correspond one-to-one with `path`. If the value is False, an empty string, or an empty list, it will not be modified.
+  manifest:
+    name:
+      - ''
+    header_uuid:
+      - true # auto generate
+      - '12356790-abcd-4efg-8hij-klmnopqrstuv'
+    header_version:
+      - true
+      - '11.45.14'
+    modules_uuid:
+      - true
+      - 'abcdefgh-hijk-4lmn-8opq-rstuvwxyz123'
+    modules_version:
+      - true
+      - '1919.8.10'
+
+obfuscator: 
+  # Characters used to generate obfuscated strings.
+  obfuscate_strs:
+    - 'IlＩｌ｜'
+    - '0Oo°Οο⁰₀○。〇︒０Ｏｏ'
+    #- '0OoΟο○０Ｏｏ'
+
+  # Characters used to generate obfuscated strings for entity series keys and values. 
+  # Must be all ASCII characters.
+  obfuscate_ascll:
+    - 'abcdefghijklmn'
+
+  json_funs:
+    # Sort JSON keys in natural order.
+    sort: true
+    # Convert both the keys and values in JSON to Unicode, even if they are ASCII characters. Follow `excluded_jsonui_names` and `excluded_entity_names`.
+    unicode: true
+    # Add a meaningless empty dict `{}` at the end of the JSON. This will not affect game parsing but may affect IDE parsing.
+    empty_dict: true
+    # Remove JSON formatting.
+    unformat: true
+    # Add meaningless comments to the JSON file. This will not affect game parsing but may affect IDE parsing.
+    comment: true
+    # Merge the JSON files under /ui/`namespace` into a single file.
+    merge_jsonui: 
+      enable: true
+      # The path of the merged file.
+      path: 'font\.test.png'
+      # Add misleading key-value pairs to `_ui_defs.json`.
+      # It must be a JSON dict string or an empty string.
+      defs_confused: '{"test_assets_defs":[0]}'
+    # Merge models, materials, animations, animation controllers, and render controllers with the same format_version into separate files.
+    merge_entity: true
+    # Obfuscate controls, non-global variables, bindings, and localization key names not present in vanilla JsonUI.
+    obfuscate_jsonui: true
+    # Obfuscate the names and variable names of entities, models, particles, materials, animations, animation controllers, and render controllers not present in vanilla.
+    obfuscate_entity: true
+    # JsonUI files that are not in the (subpacks/*/)ui/ folder.
+    additional_jsonui:
+    # - 
+
+  file_funs:
+    # Add a randomly segmented string from the `namespace` to the filenames of all texture files in `paths` not present in vanilla.
+    filename_watermark:
+      enable: true
+      paths:
+        - '**/textures/blocks/**'
+        - '**/textures/items/**'
+      # JSON references the files to be watermarked
+      references:
+        - '**/textures/item_texture.json'
+        - '**/textures/terrain_texture.json'
+        - '**/textures/flipbook_textures.json'
+    # Replace the filenames of all texture files in `paths` not present in vanilla with randomly generated strings from `obfuscate_str`.
+    # If `filename_watermark` is true, automatically exclude `filename_watermark.paths`.
+    filename_obfuscation:
+      enable: true
+      paths:
+        - '**/textures/ui/**'
+        - '**/textures/number/**'
+        - '**/textures/spawn_point/**'
+      # JSON references the files to be obfuscated
+      references:
+        - '**/ui/**/*.json'
+        - '**/entity/*.json'
+        - '**/particles/*.json'
+        - '!**/textures/**'
+    # Add the `namespace` to the tEXt of all PNG files and the ID section of all TGA files.
+    extrainfo: true
+    # Compression level for all PNG files (0-9), default is 6.
+    # Enable TGA file compression if >6
+    # Allow the program to skip image processing if set to -1
+    # Higher levels result in smaller files and greater encoding/decoding time and performance requirements, but there seems to be no significant change.
+    image_compress: 6
+    # Compression level of the final package (0-9), default is -1?.
+    pack_compress: 9
+    # Modify the mtime of each file during packaging, ensuring it is not earlier than 1980.
+    # Do not modify if the number of elements is not 6.
+    mtime: 
+      - 1989
+      - 8
+      - 10
+      - 11
+      - 45
+      - 14
+    # Create `.nomedia` file in the root directory of the RP.
+    nomedia: true
+
+  # Force set sort, unicode, empty_dict, unformat, and comment to false.
+  debug: false
+
+  # JSON without any processing.
+  excluded_jsons:
+    - manifest.json
+    - "**/loading_messages.json"
+    - "**/blocks.json"
+    - "**/item_texture.json"
+    - "**/flipbook_textures.json"
+    - "**/terrain_texture.json"
+    - "**/sound_definitions.json"
+    - "**/_global_variables.json"
+    - "**/language_names.json"
+    - "**/languages.json"
+    - "**/splashes.json"
+
+  # UI primary controls, variables, and bindings that are not obfuscated, commented, escaped, unformatted, and moved to the front.
+  excluded_jsonui_names:
+
+  # Key names, IDs, and Molang variable names in entities, models, particles, materials, animations, animation controllers, and render controllers that are not obfuscated, escaped, or unformatted.
+  excluded_entity_names:
+  

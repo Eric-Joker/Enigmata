@@ -1,0 +1,8 @@
+aiofiles
+aioshutil
+Pillow
+PyYAML
+regex
+rustworkx
+tqdm
+wcmatch

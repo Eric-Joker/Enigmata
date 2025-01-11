@@ -1,0 +1,182 @@
+# 保存原版游戏数据的目录
+data_path: './data'
+# 输出结果的路径
+work_path: './output'
+vanillas_path: 'F:\.minecraft_bedrock\versions\f1d6a02f-046a-4907-a3d7-88a3b59c70d2\data\resource_packs'
+# 指定提取后的原版游戏资源包数据，为空字符串则尝试自动选择
+# vanilla_data: 
+
+log:
+  file: false
+  console: true
+  path: './logs'
+
+packs:
+  # 需要处理的资源包目录
+  # 若需使用 png 压缩功能，路径中请勿包含非 Ascll 字符
+  path: 'F:\.minecraft_bedrock\installations\Eric Joker\Latest Release\packageData\development_resource_packs\hsdzh'
+  # 最终打包后的文件名，需与 path 一一对应
+  # 为空则不自动打包
+  zip_name: '红石大杂烩.mcpack'
+  # 为混淆时提供独特的命名空间，需与 `path` 一一对应
+  namespace: rhp
+  # 资源包目录下但不属于资源包的文件
+  excluded_files:
+    - '.git/**'
+    - '.git*'
+    - '.mc*'
+    - 'LICENSE'
+    - 'README.md'
+  # 修改 `manifest.json`, 这里的值均需与 `path` 一一对应，为False或空字符串或空列表则不进行修改
+  manifest:
+    name: '§c红石§6大§e杂§a烩§bv§93§5.§d1§rCI'
+    header_uuid: true
+    header_version: true
+    modules_uuid: true
+    modules_version: true
+
+obfuscator: 
+  # 用于生成混淆后字符串的字符
+  obfuscate_strs:
+    #- 'IlＩｌ｜'
+    - '0Oo°Οο⁰₀○。〇︒０Ｏｏ'
+    #- '0OoΟο○０Ｏｏ'
+
+  # 用于生成生物系文件键值混淆后字符串的字符
+  # 必须全是 Ascll 字符
+  obfuscate_ascll:
+    - 'abcdefghijklmn'
+
+  json_funs:
+    # 依据自然顺序排序 Json 键值
+    sort: true
+    # 将 Json 键值中的字符串转为 Unicode，尽管是 Ascll 字符。遵循 `excluded_jsonui_names` 和 `excluded_entity_names`
+    unicode: true
+    # 在 json 结尾处添加无意义空字典“{}”，不影响游戏解析但可能会影响 IDE 解析
+    empty_dict: true
+    # 去除 Json 格式化
+    unformat: true
+    # 在 json 中添加以“:”分割混淆后的字符串的 CRC32 注释，不影响游戏解析但可能会影响 IDE 解析
+    comment: true
+    # 合并 /ui/`namespace` 下的 json 为一个文件
+    merge_jsonui: 
+      enable: true
+      # 合并后文件的路径
+      path: 'font/.test.png'
+      # 在 `_ui_defs.json` 添加用于迷惑的键值
+      # 必须是 Json 字典字符串或空字符串
+      defs_confused: '{"test_assets_defs":[0]}'
+    # 将 format_version 相同的模型、材质、动画、动画控制器、渲染控制器分别合并为一个文件
+    merge_entity: true
+    # 混淆 JsonUI 中原版不具有的控件和非全局变量的变量、绑定、本地化键名
+    obfuscate_jsonui: true
+    # 混淆原版不具有的生物、模型、粒子、材质、动画、动画控制器、渲染控制器的名字及其中变量名
+    obfuscate_entity: true
+    # 不在 `(subpacks/*/)ui/` 文件夹下的 JsonUI 文件
+    additional_jsonui:
+    # - 
+
+  file_funs:
+    # 对 `paths` 中所有原版不具有的贴图文件的文件名添加由 `namespace` 随机分割的字符串
+    filename_watermark:
+      enable: true
+      paths:
+        - '**/textures/blocks/**'
+        - '**/textures/items/**'
+      # 引用要打水印的文件的 json
+      references:
+        - '**/textures/item_texture.json'
+        - '**/textures/terrain_texture.json'
+        - '**/textures/flipbook_textures.json'
+    # 将 `paths` 中所有原版不具有的贴图文件的文件名替换为由 `obfuscate_str` 随机生成的字符串
+    # 如果 `filename_watermark` 为 true，自动排除 `filename_watermark.paths`
+    filename_obfuscation:
+      enable: true
+      paths:
+        - '**/textures/ui/**'
+        - '**/textures/number/**'
+        - '**/textures/spawn_point/**'
+      # 引用要打水印的文件的 json。
+      references:
+        - '**/ui/**/*.json'
+        - '**/entity/*.json'
+        - '**/particles/*.json'
+        - '!**/textures/**'
+    # 将 `namespace` 添加进所有 png 的 tEXt、所有 tga 的 id section
+    extrainfo: true
+    # 所有 png 文件的压缩等级(0-9)，默认为 6。
+    # >6 时启用 tga 文件压缩
+    # 为 -1 时允许程序跳过图片处理
+    # 等级越高文件越小、编码解码时间与性能需求越大，但好像并没有明显变化。
+    image_compress: 9
+    # 最终包体的压缩等级(0-9)，默认为 -1还是6。
+    pack_compress: 9
+    # 打包时修改每个文件的 mtime，不能早于 1980
+    # 元素数不为 6 时不修改
+    mtime: 
+      - 1989
+      - 8
+      - 10
+      - 11
+      - 45
+      - 14
+    # 在资源包根目录下创建 `.nomedia` 文件
+    nomedia: true
+
+  # 强制关闭 sort、unicode、empty_dict、unformat、comment
+  debug: false
+
+  # 不进行任何处理的 json
+  excluded_jsons:
+    - manifest.json
+    - "**/loading_messages.json"
+    - "**/blocks.json"
+    - "**/item_texture.json"
+    - "**/flipbook_textures.json"
+    - "**/terrain_texture.json"
+    - "**/sound_definitions.json"
+    - "**/_global_variables.json"
+    - "**/language_names.json"
+    - "**/languages.json"
+    - "**/splashes.json"
+
+  # 不进行混淆、添加注释、转义、去格式化并且将顺序提前的 UI 一级控件、变量、绑定
+  excluded_jsonui_names:
+    - hotbar_grid_template
+    - setting_options_panel
+    - chest_label_panel
+
+  # 不在生物、模型、粒子、材质、动画、动画控制器、渲染控制器中进行混淆、转义、去格式化的键名和的 ID 及 Molang 变量名
+  excluded_entity_names:
+    - number_0
+    - number_1
+    - number_2
+    - number_3
+    - number_4
+    - number_5
+    - number_6
+    - number_7
+    - number_8
+    - number_9
+    - divisor
+    - bribed_sign
+    - transforming
+    - transparent
+    - health_display_heart
+    - target
+    - target_tame
+    - real_time_health_ten
+    - max_health_ten
+    - real_time_health_hundreds
+    - max_health_hundreds
+    - target_sign
+    - transforming_sign
+    - heart
+    - real_time_health_single
+    - max_health_single
+    - max_health
+    - health_display_offset
+    - health_display
+    - health_display_hide
+    - health_display_baby
+    - health_display_controller
