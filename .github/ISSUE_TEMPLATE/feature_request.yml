@@ -1,0 +1,20 @@
+name: Enhancement | 建议
+title: "[Feature] "
+description: Suggest a feature or improvement | 功能请求或改进建议
+labels: ["enhancement"]
+body:
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary | 简述
+    validations:
+      required: true
+
+  - type: textarea
+    id: detail
+    attributes:
+      label: Implementation ideas | 实现思路
+      description: |
+        How to implement the feature?
+        如何实现该功能？

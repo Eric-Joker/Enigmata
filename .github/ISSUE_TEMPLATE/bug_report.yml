@@ -1,0 +1,58 @@
+name: Bug Report | 问题报告
+title: "[Bug] "
+description: Report a bug | 报告问题
+labels: ["bug"]
+body:
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Notice 须知
+      description: |
+        If you do not comply with the required options, your issue will be closed without any response.
+        You may need to provide the source code of your RP. If so, please send your RP to my email 1277243150 @ qq.com. If the file size is too large, please use a network storage service that does not require registration, installing a client, or speed limits, and send the link to my email.
+
+        若不遵守必选项，你的议题会在没有任何回复的情况下关闭。
+        你可能需要提供你的资源包源码，若如此，请将你的资源包发送至我的邮箱 1277243150 @ qq.com。如果文件过大，请使用下载时无需注册、下载客户端且不限速的网络存储服务，并将链接发送至我的邮箱。
+      options:
+        - label: I've searched the Issue Tracker and can't find an Issue that submitted the same issue. 我已经搜索过 Issue Tracker，且并未查询到提交相似问题的 Issue。
+          required: true
+        - label: I confirm that this problem still exists in the lastest commit. 我确认最新的提交存在此问题。
+          required: true
+
+  - type: textarea
+    id: bug
+    attributes:
+      label: Description | 细述
+      description: |
+        Please enter a clear description of the bug.
+        请清晰的说明此问题。
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshots | 截图
+
+  - type: textarea
+    id: log
+    attributes:
+      label: Exceptions | 报错
+      description: |
+        Please enter the error log or traceback.
+        请提供错误日志或 traceback。
+
+  - type: input
+    id: mc_ver
+    attributes:
+      label: Minecraft Version | 游戏版本
+      description: |
+        Provide the complete four-digit version number if possible.
+        尽可能提供四位完整版本号。
+      placeholder: "e.g. 1.21.51.1"
+  
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context | 附加信息
