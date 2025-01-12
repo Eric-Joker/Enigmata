@@ -119,7 +119,7 @@ class VanillaData:
         ui_namespace = []
         property_discarded = set()
         entity_mapping = {
-            "animation_controllers": ("animation_index", "ac"),
+            "animation_controllers": ("animation_index", "animation"),
             "render_controllers": ("rc",),
             "materials": ("material_index",),
             "textures": ("texture_index",),
@@ -169,8 +169,8 @@ class VanillaData:
             instance = TraverseStats()
             match key:
                 case "ac":
-                    instance.traverse(data, "animations", get_ac_id, dag)
-                case "animations":
+                    instance.traverse(data, "animation", get_ac_id, dag)
+                case "animation":
                     instance.traverse(data, key, get_animation_id, dag)
                 case "entity":
                     instance.traverse(

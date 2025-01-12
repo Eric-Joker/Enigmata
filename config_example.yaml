@@ -25,6 +25,7 @@ packs:
     - rhp
   # Files under the RP directory that do not belong to the RP.
   excluded_files:
+    - '.github/**'
     - '.git/**'
     - '.git*'
     - '.mc*'

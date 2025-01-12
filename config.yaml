@@ -22,6 +22,7 @@ packs:
   namespace: rhp
   # 资源包目录下但不属于资源包的文件
   excluded_files:
+    - '.github/**'
     - '.git/**'
     - '.git*'
     - '.mc*'
