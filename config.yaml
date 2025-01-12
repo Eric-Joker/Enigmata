@@ -27,7 +27,7 @@ packs:
     - '.mc*'
     - 'LICENSE'
     - 'README.md'
-  # 修改 `manifest.json`, 这里的值均需与 `path` 一一对应，为False或空字符串或空列表则不进行修改
+  # 修改 `manifest.json`, 这里的值均需与 `path` 一一对应，为False或空字符串则不进行修改
   manifest:
     name: '§c红石§6大§e杂§a烩§bv§93§5.§d1§rCI'
     header_uuid: true

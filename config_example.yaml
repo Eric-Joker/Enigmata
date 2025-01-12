@@ -30,7 +30,7 @@ packs:
     - '.mc*'
     - 'LICENSE'
     - 'README.md'
-  # Modify `manifest.json`, the values here must correspond one-to-one with `path`. If the value is False, an empty string, or an empty list, it will not be modified.
+  # Modify `manifest.json`, the values here must correspond one-to-one with `path`. If the value is False or an empty string, it will not be modified.
   manifest:
     name:
       - ''
