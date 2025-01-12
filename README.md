@@ -1,8 +1,8 @@
 <div align="center">
 
-[![](https://img.shields.io/badge/Enigmata-0.1.0-purple.svg)](https://github.com/Eric-Joker/Enigmata)
+[![](https://img.shields.io/github/v/release/Eric-Joker/Enigmata?color=purple)](https://github.com/Eric-Joker/Enigmata/releases)
 [![](https://img.shields.io/badge/license-GPLv3-blue)](https://github.com/Eric-Joker/Enigmata/blob/main/LICENSE)
-![](https://img.shields.io/badge/python-3.12-yellow)
+[![](https://img.shields.io/badge/python-3.12-yellow)](https://www.python.org)
 
 [🛠Install](#install) |
 [📖Usage](#usage) |
