@@ -25,7 +25,6 @@ from utils import default_dumps
 
 NOT_CONTROL_KEYS = {
     "requires",
-    "ignored",
     "binding_name",
     "binding_name_override",
     "binding_type",
