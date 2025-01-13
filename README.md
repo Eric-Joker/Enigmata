@@ -29,10 +29,10 @@ Enigmata is an open-source resource pack obfuscator for Minecraft Bedrock Editio
 
 ## Supported Resource Pack
 
-This obfuscator has some limitations regarding the resource packages it supports. Most of these limitations are not difficult to resolve, but since I do not need them. [Pull requests](https://github.com/Eric-Joker/Enigmata/pulls) are welcome.
+This obfuscator has some limitations regarding the RP it supports. Most of these limitations are not difficult to resolve, but since I do not need them. [Pull requests](https://github.com/Eric-Joker/Enigmata/pulls) are welcome.
 
 - NOT ADDON
-- The JsonUI obfuscation feature will only obfuscate controls in files that do not share the same name as Vanilla JsonUI files. eg:
+- The JsonUI obfuscation feature will only obfuscate the controls in all JSON files within a specific folder. eg:
 
   ```
   ui/
@@ -43,9 +43,9 @@ This obfuscator has some limitations regarding the resource packages it supports
       └── inventory.json
   ```
   It will only obfuscate the JsonUI in the `namespace`. If the JsonUI in the `ui` references controls from the former, the references will be obfuscated accordingly.
-- When using the filename obfuscation feature, the obfuscated images should preferably not be in the root directory of the resource pack, as this may lead to unexpected results.
+- When using the filename obfuscation feature, the obfuscated images should preferably not be in the root directory of the RP, as this may lead to unexpected results.
 - When using the JsonUI and Entity series file merging features, files in subpacks are not merged. (The logic for excluding subpacks has not been tested.)
-- When using the merging feature for Entity series files, filenames must comply with the standards for /.+?\.(animation_controllers|animations|renderer_controllers|geo)\.json/.
+- When using the merging feature for Entity series files, filenames must comply with the standards for /.+?\\.(animation_controllers|animations|renderer_controllers|geo)\\.json/.
 - and more?
   
 ## Install
@@ -74,11 +74,11 @@ Then, try running the following:
 python main.py
 ```
 
-All configurations in config.yaml have corresponding flags, which will take precedence over the config file. Use `-h` to see details.
+All configurations in config.yaml have corresponding flags, which will take precedence over the file. Use `-h` to see details.
 
 The obfuscated package will be output in the `./output`, where `obfuscation_reference.json` will list the corresponding strings before and after obfuscation."
 
-Under certain conditions, you may be required to update the Vanilla Data. You need to change the `vanillas_path` configuration to the directory containing all the Vanilla Resource Packs of the latest official version of the current game. Use `-e` to enter the data extraction process.
+Under certain conditions, you may be required to update the Vanilla Data. You need to change the `vanillas_path` configuration to the directory containing all the vanilla RP of the latest version of Minecraft. Use `-e` to enter the data extraction process.
 
 ## Donation
 

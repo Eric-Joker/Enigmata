@@ -32,7 +32,7 @@ Enigmata 是一款开源的 Minecraft Bedrock Edition 资源包混淆器，在�
 此混淆器适用的资源包具有一些限制，其实解决绝大部分限制并不算困难，但是因为我用不到所以不想做，欢迎 [Pull Request](https://github.com/Eric-Joker/Enigmata/pulls)。
 
 - 不支持行为包
-- JsonUI 混淆功能只会混淆不与 Vanilla JsonUI 文件同名的文件里的控件。举例：
+- JsonUI 混淆功能只会混淆在单独文件夹下的所有 json 文件里的控件。举例：
 
   ```
   ui/
@@ -45,7 +45,7 @@ Enigmata 是一款开源的 Minecraft Bedrock Edition 资源包混淆器，在�
   它将只会混淆 `namespace` 文件夹下的 JsonUI，如果 `ui` 文件夹下的 JsonUI 有引用前者中的控件，引用的地方会被正常混淆。
 - 使用文件名混淆功能时，被混淆的图片尽量不能处于资源包根目录，不然可能会引发预期之外的结果。
 - 使用 JsonUI、Entity 系文件合并功能时，子包的文件不进行合并。（排除子包的相关逻辑暂未经测试）
-- 使用合并 Entity 系文件功能时，文件名必须符合 /.+?\.(animation_controllers|animations|renderer_controllers|geo)\.json/ 的规范。
+- 使用合并 Entity 系文件功能时，文件名必须符合 /.+?\\.(animation_controllers|animations|renderer_controllers|geo)\\.json/ 的规范。
 - 也许有更多忌讳，想不起来了（）
   
 ## 安装
@@ -74,11 +74,11 @@ pip install -r requirements.txt
 python main.py
 ```
 
-所有在`config.yaml`的配置都有对应的命令行标志，优先级将高于配置文件，携带 `-h` 以查看详情。
+所有在`config.yaml`的配置都有对应的命令行标志，优先级将高于文件，携带 `-h` 以查看详情。
 
 混淆后的包体将输出在 `./output` 文件夹下，其中 `obfuscation_reference.json` 里将混淆前后的字符串一一对应。
 
-在一定条件下可能会要求更新 Vanilla Data，需要将 `vanillas_path` 配置更改为包含当前游戏最新正式版的所有 Vanilla 资源包的目录。可以携带 `-e` 进入提取数据流程。
+在一定条件下可能会要求更新 Vanilla Data，需要将 `vanillas_path` 配置更改为包含 Minecraft 最新版的所有 vanilla 资源包的目录。可以携带 `-e` 进入提取数据流程。
 
 ## 给我打钱
 

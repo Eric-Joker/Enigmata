@@ -43,7 +43,7 @@ obfuscator:
     - '0Oo°Οο⁰₀○。〇︒０Ｏｏ'
     #- '0OoΟο○０Ｏｏ'
 
-  # 用于生成生物系文件键值混淆后字符串的字符
+  # 用于生成实体系文件键值混淆后字符串的字符
   # 必须全是 Ascll 字符
   obfuscate_ascll:
     - 'abcdefghijklmn'
@@ -71,7 +71,7 @@ obfuscator:
     merge_entity: true
     # 混淆 JsonUI 中原版不具有的控件和非全局变量的变量、绑定、本地化键名
     obfuscate_jsonui: true
-    # 混淆原版不具有的生物、模型、粒子、材质、动画、动画控制器、渲染控制器的名字及其中变量名
+    # 混淆原版不具有的实体、模型、粒子、材质、动画、动画控制器、渲染控制器的名字及其中变量名
     obfuscate_entity: true
     # 不在 `(subpacks/*/)ui/` 文件夹下的 JsonUI 文件
     additional_jsonui:
@@ -147,7 +147,7 @@ obfuscator:
     - setting_options_panel
     - chest_label_panel
 
-  # 不在生物、模型、粒子、材质、动画、动画控制器、渲染控制器中进行混淆、转义、去格式化的键名和的 ID 及 Molang 变量名
+  # 不在实体、模型、粒子、材质、动画、动画控制器、渲染控制器中进行混淆、转义、去格式化的键名和的 ID 及 Molang 变量名
   excluded_entity_names:
     - number_0
     - number_1
