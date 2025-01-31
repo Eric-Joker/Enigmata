@@ -19,6 +19,7 @@ from . import BiMap
 
 
 class OBFStrType(Enum):
+    OBFFILE = auto()
     AC = "animation_controllers"
     ACS = "animation_controller_states"
     ANIMATION = "animations"
@@ -40,7 +41,6 @@ class OBFStrType(Enum):
     LOCALIZATION = "localizations"
     UIMERGE = "ui_merge_controls"
     FILENAME = "filenames"
-    OBFFILE = auto()
 
     @property
     def bi_map(self):
