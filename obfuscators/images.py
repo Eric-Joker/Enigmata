@@ -110,27 +110,27 @@ class Images(OBF):
             pbm.update(1)
 
         # fix jsons
-        def process_dict(data: dict, sub=""):
-            return {process_str(k, sub): v for k, v in data.items()}, False
-
-        def process_str(data: str, *_, sub=""):
-            if os.path.splitext(path := os.path.join(sub, data).replace("\\", "/"))[1] == "":
+        def repl(match: re.Match, subp):
+            if os.path.splitext(path := os.path.join(subp, (data := match.group(0))).replace("\\", "/"))[1] == "":
                 for ext in [".png", ".tga"]:
                     spliced_path = path + ext
                     if spliced_path in OBFStrType.FILENAME.bi_map:  # returns False when carrying subpack.
-                        return os.path.relpath(OBFStrType.FILENAME.bi_map[spliced_path], sub).replace("\\", "/")[: -len(ext)]
+                        return os.path.relpath(OBFStrType.FILENAME.bi_map[spliced_path], subp).replace("\\", "/")[: -len(ext)]
                     elif (spliced_data := data + ext) in OBFStrType.FILENAME.bi_map:
                         return OBFStrType.FILENAME.bi_map[spliced_data][: -len(ext)]
                 return data
             elif path in OBFStrType.FILENAME.bi_map:
-                return os.path.relpath(OBFStrType.FILENAME.bi_map[path], sub).replace("\\", "/")[
+                return os.path.relpath(OBFStrType.FILENAME.bi_map[path], subp).replace("\\", "/")[
                     : -len(os.path.splitext(path)[1])
                 ]
             elif data in OBFStrType.FILENAME.bi_map:
                 return OBFStrType.FILENAME.bi_map[data][: -len(os.path.splitext(data)[1])]
             return data
 
-        sub_pattern = re.compile(r"[/\\]?(subpacks[/\\].+?)[/\\]")
+        subp_pattern = re.compile(r"[/\\]?(subpacks[/\\].+?)[/\\]")
+        value_pattern = re.compile(
+            r'(?<=(?<!//.*|/\*[\s\S]*?(?!\*/)\s*)".+?"(?:\s*/\*[\s\S]*?\*/\s*|\s*)(?<!//.*):(?:\s*/\*[\s\S]*?\*/\s*|\s*)(?<!//.*)").*?(?=")'
+        )
         for file in texture_jsons + texture_jsons_2:
             path = os.path.join(self.pack_path, file.path)
             try:
@@ -139,9 +139,9 @@ class Images(OBF):
             except Exception as e:
                 print(f"An error occurred while loading json ({path}):{e}")
                 self.logger.exception(e)
-                data = "{}"
-            sub = search.group(1) if (search := sub_pattern.search(file.path)) else ""
-            data = TraverseJson(partial(process_dict, sub=sub), str_fun=partial(process_str, sub=sub)).traverse(data)
+                data = ""
+            search = subp_pattern.search(file.path)
+            data = value_pattern.sub(partial(repl, subp=search.group(1) if search else ""), data)
             new_dir = os.path.dirname(new_path := os.path.join(self.work_path, file.path))
             try:
                 await async_mkdirs(new_dir)

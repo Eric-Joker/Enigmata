@@ -181,3 +181,4 @@ obfuscator:
     - health_display_hide
     - health_display_baby
     - health_display_controller
+    - item_cell_rhp
