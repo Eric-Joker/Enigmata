@@ -41,23 +41,23 @@ class PbarManager:
         # self.pbar.refresh()
 
     @check_console
-    def revert_t_item(self, increment):
+    def revert_t_item(self, increment=1):
         self.pbar.total -= increment
         # self.pbar.refresh()
 
     @check_console
-    def update_t_item(self, increment):
+    def update_t_item(self, increment=1):
         self.pbar.total += increment
         # self.pbar.refresh()
 
     @check_console
-    def update_n_file(self, increment):
+    def update_n_file(self, increment=1):
         self.n_file += increment
         self.pbar.unit = f"items {self.n_file}/{self.t_file}files"
         # self.pbar.refresh()
 
     @check_console
-    def update(self, increment):
+    def update(self, increment=1):
         self.pbar.unit = f"items {self.n_file}/{self.t_file}files"
         self.pbar.update(increment)
 

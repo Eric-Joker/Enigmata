@@ -104,24 +104,24 @@ class Entities(OBF):
         if controls := data.get(filetype):
             version: str = data.get("format_version")
             for k, v in controls.items():
-                if k[len(control_char) :] not in cfg.excluded_entity_names:
+                if k[len(control_char) :] not in cfg.exclude_entity_names:
                     merged_dicts[f"v{version.replace(".", "")}"].setdefault(filetype, {})[k] = v
 
     def _merge_model(self, data: dict, _: str, control_char: str, **merged_dicts):
         if (version := data.get("format_version", "1.8.0")) == "1.8.0" or version == "1.10.0":
             for k, v in data.items():
-                if k != "format_version" and k[len(control_char) :] not in cfg.excluded_entity_names:
+                if k != "format_version" and k[len(control_char) :] not in cfg.exclude_entity_names:
                     merged_dicts[f"v{version.replace(".", "")}"][k] = v
         else:
             for i in data.get("minecraft:geometry"):
                 if (
                     i.get("description", {}).get("identifier", "").partition(":")[0][len(control_char) :][len(control_char) :]
-                    not in cfg.excluded_entity_names
+                    not in cfg.exclude_entity_names
                 ):
                     merged_dicts[f"v{version.replace(".", "")}"].setdefault("minecraft:geometry", []).append(i)
 
     async def _async_merge_common(self, fun: Callable, filetype: str, control_char="", **merged_dicts):
-        excluded_paths = set()
+        exclude_paths = set()
         fh_list: list[FileHandler] = getattr(self, filetype)
 
         # TODO: Since I don't need it, the functionality of obfuscating materials has not been tested.
@@ -143,16 +143,16 @@ class Entities(OBF):
                 or self.material_indexes
                 and filetype == "materials"
                 and j.cut not in can_merge
-                or any(os.path.basename(j.cut).split("/")[-1].startswith(e) for e in cfg.excluded_entity_names)
+                or any(os.path.basename(j.cut).split("/")[-1].startswith(e) for e in cfg.exclude_entity_names)
                 or j.cut in getattr(vd, filetype)
             ):
                 self.processed[j.path] = await self.async_get_json_data(j)
-                excluded_paths.add(j.cut)
+                exclude_paths.add(j.cut)
 
         for j in fh_list.copy():
             splited = os.path.basename(j.path).partition(".")
             # obfuscate the filenames of files that cannot be merged
-            if (is_exclude := j.cut in excluded_paths) or not cfg.merge_entity or j.subpack_path:
+            if (is_exclude := j.cut in exclude_paths) or not cfg.merge_entity or j.subpack_path:
                 if cfg.obfuscate_entity and not is_exclude:
                     j.path = os.path.join(os.path.dirname(j.path), gen_obfstr(splited[0], OBFStrType.OBFFILE) + splited[2])
                     # j.path = os.path.join(os.path.dirname(j.path), gen_obfstr(splited[0], OBFStrType.OBFFILE, 2) + splited[2])
@@ -160,7 +160,7 @@ class Entities(OBF):
                 j.processed = True
                 if cfg.merge_entity:
                     self.exclude_merge_files.add(j.path)
-                    pbm.revert_t_item(1)
+                    pbm.revert_t_item()
             # start merge
             else:
                 fun(
@@ -174,8 +174,8 @@ class Entities(OBF):
 
                 fh_list.remove(j)
                 pbm.revert_t_item(sum((cfg.comment, cfg.empty_dict, cfg.sort, cfg.unicode, cfg.obfuscate_entity)))
-                pbm.update_n_file(1)
-                pbm.update(1)
+                pbm.update_n_file()
+                pbm.update()
 
         for k, v in merged_dicts.items():
             if len(v) > 1:
@@ -193,7 +193,7 @@ class Entities(OBF):
             )
             for j in self.material_indexes:
                 self.processed[j.path] = instance.traverse(await self.async_get_json_data(j))
-                pbm.update(1)
+                pbm.update()
 
     async def _async_obf_common(
         self, filetype: str, mapping=None, eh=EntityHandler(), versions: tuple[str] = (), get_id: Callable = None
@@ -210,10 +210,10 @@ class Entities(OBF):
                     await self.async_get_json_data(j), mapping, eh, self.dag, get_id
                 )
 
-                pbm.update(1)
+                pbm.update()
                 j.processed = True
             else:
-                pbm.revert_t_item(1)
+                pbm.revert_t_item()
 
     async def async_obf_ac(self):
         merged_1_10 = {"format_version": "1.10.0"}
@@ -459,7 +459,7 @@ class TraverseEntities(TraverseJson):
 
     def is_exclude(self, data: str, vd: set | dict | tuple | Callable, identifier: str = None):
         return (
-            (splited := self.get_truly_id(data))[0] in self.cfg.excluded_entity_names
+            (splited := self.get_truly_id(data))[0] in self.cfg.exclude_entity_names
             or splited[0] in (vd if isinstance(vd, (set, dict, tuple)) else vd(self.handler.dag_type, identifier)),
             splited[0],
             splited[1],
@@ -526,7 +526,7 @@ class TraverseEntities(TraverseJson):
                 (char := match.group(1))[0] == "q"
                 or char != "array"
                 and match.group(2) in self.vd.get_molang_vars(self.handler.dag_type, identifier)
-                or match.group(2) in self.cfg.excluded_entity_names
+                or match.group(2) in self.cfg.exclude_entity_names
             ):
                 return f"{char}.{match.group(2)}"
             if char == "array":

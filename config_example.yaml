@@ -12,26 +12,27 @@ log:
   path: '.\logs'
 
 packs:
-  # for resource packs that need to be obfuscated
+  # Resource packs that require obfuscation
   # If you need to use the PNG compression feature, please ensure the path does not contain non-ASCII characters.
   path: 
     - ''
   # The final packaged file name must correspond to the path one-to-one.
-  # If it is an empty string, it will not be automatically packaged.
+  # Empty string disables auto-packaging.
   zip_name: 
     - ''
   # Provide a unique namespace for obfuscation, which must correspond to the path one-to-one.
   namespace: 
     - rhp
   # Files under the RP directory that do not belong to the RP.
-  excluded_files:
+  exclude_files:
     - '.github/**'
     - '.git/**'
     - '.git*'
     - '.mc*'
     - 'LICENSE'
     - 'README.md'
-  # Modify `manifest.json`, the values here must correspond one-to-one with `path`. If the value is False or an empty string, it will not be modified.
+  # For `manifest.json` bindings, values must match path 1:1.
+  # Setting as False/empty skips modification.
   manifest:
     name:
       - ''
@@ -55,7 +56,7 @@ obfuscator:
     - '0Oo°Οο⁰₀○。〇︒０Ｏｏ'
     #- '0OoΟο○０Ｏｏ'
 
-  # Characters used to generate obfuscated strings for entity series keys and values. 
+  # Entity series keys/values obfuscation character set
   # Must be all ASCII characters.
   obfuscate_ascll:
     - 'abcdefghijklmn'
@@ -63,7 +64,7 @@ obfuscator:
   json_funs:
     # Sort JSON keys in natural order.
     sort: true
-    # Convert both the keys and values in JSON to Unicode, even if they are ASCII characters. Follow `excluded_jsonui_names` and `excluded_entity_names`.
+    # Convert both the keys and values in JSON to Unicode, even if they are ASCII characters. Follow `exclude_jsonui_names` and `exclude_entity_names`.
     unicode: true
     # Add a meaningless empty dict `{}` at the end of the JSON. This will not affect game parsing but may affect IDE parsing.
     empty_dict: true
@@ -74,7 +75,7 @@ obfuscator:
     # Merge the JSON files under /ui/`namespace` into a single file.
     merge_jsonui: 
       enable: true
-      # The path of the merged file.
+      # Merged file path
       path: 'font\.test.png'
       # Add misleading key-value pairs to `_ui_defs.json`.
       # It must be a JSON dict string or an empty string.
@@ -90,18 +91,18 @@ obfuscator:
     # - 
 
   file_funs:
-    # Add a randomly segmented string from the `namespace` to the filenames of all texture files in `paths` not present in vanilla.
+    # Insert randomized `namespace` fragments into texture filenames of non-vanilla `paths`
     filename_watermark:
       enable: true
       paths:
         - '**/textures/blocks/**'
         - '**/textures/items/**'
-      # JSON references the files to be watermarked
+      # Watermark target files (JSON references)
       references:
         - '**/textures/item_texture.json'
         - '**/textures/terrain_texture.json'
         - '**/textures/flipbook_textures.json'
-    # Replace the filenames of all texture files in `paths` not present in vanilla with randomly generated strings from `obfuscate_str`.
+    # Obfuscated texture replacement using `obfuscate_str`
     # If `filename_watermark` is true, automatically exclude `filename_watermark.paths`.
     filename_obfuscation:
       enable: true
@@ -109,7 +110,7 @@ obfuscator:
         - '**/textures/ui/**'
         - '**/textures/number/**'
         - '**/textures/spawn_point/**'
-      # JSON references the files to be obfuscated
+      # Obfuscation target files (JSON references)
       references:
         - '**/ui/**/*.json'
         - '**/entity/*.json'
@@ -140,7 +141,7 @@ obfuscator:
   debug: false
 
   # JSON without any processing.
-  excluded_jsons:
+  exclude_jsons:
     - manifest.json
     - "**/loading_messages.json"
     - "**/blocks.json"
@@ -153,9 +154,12 @@ obfuscator:
     - "**/languages.json"
     - "**/splashes.json"
 
-  # UI primary controls, variables, and bindings that are not obfuscated, commented, escaped, unformatted, and moved to the front.
-  excluded_jsonui_names:
+  # Texture filenames (no obfuscation/watermark)
+  exclude_image_names:
 
-  # Key names, IDs, and Molang variable names in entities, models, particles, materials, animations, animation controllers, and render controllers that are not obfuscated, escaped, or unformatted.
-  excluded_entity_names:
+  # UI primary controls, variables, and bindings (no obfuscation/commenting/escaping/formatting/front-positioning)
+  exclude_jsonui_names:
+
+  # Key names, IDs, and Molang variables in entities, models, particles, materials, animations, animation controllers, and render controllers (no obfuscation/escaping/formatting)
+  exclude_entity_names:
   

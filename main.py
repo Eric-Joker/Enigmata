@@ -159,11 +159,11 @@ async def async_start_obf(cfg: EnigmataConfig):
                 fh.cut = os.path.splitext(cut)[0] if insub else fh.path
                 if glob.globmatch(fh.path, cfg.watermark_paths, flags=glob.D | glob.G | glob.N):
                     renames.append(fh)
-                    pbm.update_t_item(1)
+                    pbm.update_t_item()
                     return
                 elif glob.globmatch(fh.path, cfg.obfuscate_paths, flags=glob.D | glob.G | glob.N):
                     obf_names.append(fh)
-                    pbm.update_t_item(1)
+                    pbm.update_t_item()
                     return
             if cfg.image_compress != -1 or cfg.extrainfo:
                 l.append(fh)
@@ -173,7 +173,7 @@ async def async_start_obf(cfg: EnigmataConfig):
                 rel_path = os.path.relpath((path := os.path.join(root, file)), root_path)
                 if glob.globmatch(
                     rel_path,
-                    itertools.chain(("!manifest.json"), cfg.excluded_files) if cfg.mod_manifest else cfg.excluded_files,
+                    itertools.chain(("!manifest.json"), cfg.exclude_files) if cfg.mod_manifest else cfg.exclude_files,
                     flags=glob.D | glob.G | glob.N,
                 ):
                     continue
@@ -188,11 +188,11 @@ async def async_start_obf(cfg: EnigmataConfig):
                     pbm.update_t_item(sum((cfg.image_compress > 6, cfg.extrainfo)))
                 elif rel_path.endswith(".lang"):
                     if cfg.obfuscate_jsonui:
-                        pbm.update_t_item(1)
+                        pbm.update_t_item()
                     langs.append(fh)
                 elif rel_path == "manifest.json":
                     manifest = fh
-                    pbm.update_t_item(1)
+                    pbm.update_t_item()
                 elif glob.globmatch(rel_path, ("materials/*.material", "subpacks/*/materials/*.material"), flags=glob.D):
                     splited = fh.path.split(os.sep)
                     fh.subpack_path = os.sep.join(splited[:2]) if "subpacks" in fh.path else ""
@@ -209,14 +209,14 @@ async def async_start_obf(cfg: EnigmataConfig):
 
                     if glob.globmatch(rel_path, cfg.wm_references, flags=glob.D | glob.G | glob.N):
                         texture_jsons.append(fh)
-                        pbm.update_t_item(1)
+                        pbm.update_t_item()
                     elif glob.globmatch(rel_path, cfg.obf_references, flags=glob.D | glob.G | glob.N):
                         texture_jsons_2.append(fh)
-                        pbm.update_t_item(1)
+                        pbm.update_t_item()
                     if cfg.merged_ui_path and rel_path.endswith("_global_variables.json"):
                         ui_global_vars.append(fh)
                     elif cfg.merged_ui_path and rel_path.endswith("_ui_defs.json"):
-                        pbm.update_t_item(1)
+                        pbm.update_t_item()
                         ui_defs.append(fh)
                     elif glob.globmatch(
                         rel_path,
@@ -234,7 +234,7 @@ async def async_start_obf(cfg: EnigmataConfig):
                         jsonuis.append(fh)
                     elif glob.globmatch(rel_path, ("entity/**/*", "subpacks/*/entity/**/*"), flags=glob.D | glob.G):
                         if cfg.obfuscate_entity:
-                            pbm.update_t_item(1)
+                            pbm.update_t_item()
                         entities.append(fh)
                     elif glob.globmatch(
                         rel_path,
@@ -256,11 +256,11 @@ async def async_start_obf(cfg: EnigmataConfig):
                         rcs.append(fh)
                     elif glob.globmatch(rel_path, ("particles/**/*", "subpacks/*/particles/**/*"), flags=glob.D | glob.G):
                         if cfg.obfuscate_entity:
-                            pbm.update_t_item(1)
+                            pbm.update_t_item()
                         particles.append(fh)
                     elif glob.globmatch(rel_path, ("materials/*", "subpacks/*/materials/*"), flags=glob.D):
                         if cfg.merge_entity:
-                            pbm.update_t_item(1)
+                            pbm.update_t_item()
                         material_indexes.append(fh)
                     elif glob.globmatch(
                         rel_path,
@@ -271,15 +271,15 @@ async def async_start_obf(cfg: EnigmataConfig):
                 else:
                     mkdirs(new_path := os.path.join(work_path, os.path.dirname(rel_path)))
                     shutil.copy2(path, new_path)
-                    pbm.update_n_file(1)
+                    pbm.update_n_file()
         # stats texture json
         if cfg.watermark_paths or cfg.obfuscate_paths:
-            for f in renames + obf_names:
-                if os.path.exists(os.path.join(root_path, rel_path := f"{os.path.splitext(f.path)[0]}.json")):
+            for file in renames + obf_names:
+                if os.path.exists(os.path.join(root_path, rel_path := f"{os.path.splitext(file.path)[0]}.json")):
                     for j in std_jsons:
                         if rel_path == j:
                             image_jsons.append(j)
-                    pbm.update_t_item(1)
+                    pbm.update_t_item()
 
         if cfg.nomedia:
             with default_write(os.path.join(work_path, ".nomedia")):

@@ -82,7 +82,11 @@ Under certain conditions, you may be required to update the Vanilla Data. You ne
 
 ## Donation
 
-Because I am still a minor, the policies in my area make it difficult for me to get money here. 😭
+[PayPal](https://www.paypal.com/paypalme/Airkk426)
+
+[afdian](https://afdian.com/a/Eric_Joker)
+
+Thank you very much for your willingness to support the author. Your avatar will appear on my Github profile and in the Readme of this project.
 
 ## Thanks
 

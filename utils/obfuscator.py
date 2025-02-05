@@ -133,7 +133,7 @@ class TraverseControls(TraverseJson):
         if ns := data.get("namespace"):
             new_dict["namespace"] = ns
         for k, v in data.items():
-            if self.exclude and k.partition("@")[0] in self.cfg.excluded_jsonui_names:
+            if self.exclude and k.partition("@")[0] in self.cfg.exclude_jsonui_names:
                 new_dict[k] = v
             if k in NOT_CONTROL_KEYS:
                 is_control = False
@@ -157,7 +157,7 @@ class TraverseControls(TraverseJson):
     def process_str(self, data: str, *args):
         from config import cfg
 
-        return data if self.exclude and data.partition("@")[-1] in cfg.excluded_jsonui_names else self.str_fun(data, *args)
+        return data if self.exclude and data.partition("@")[-1] in cfg.exclude_jsonui_names else self.str_fun(data, *args)
 
 
 ENUM_LINKS = (

@@ -84,6 +84,12 @@ python main.py
 
 <img src='receiving code.png' width=400>
 
+[PayPal](https://www.paypal.com/paypalme/Airkk426)
+
+[爱发电](https://afdian.com/a/Eric_Joker)
+
+非常感谢您的支持\~您的头像会出现在我的 Github 主页和本项目的 Readme 中\~
+
 ## 感谢
 
 感谢此项目的所有贡献者！

@@ -21,7 +21,7 @@ packs:
   # 为混淆时提供独特的命名空间，需与 `path` 一一对应
   namespace: rhp
   # 资源包目录下但不属于资源包的文件
-  excluded_files:
+  exclude_files:
     - '.github/**'
     - '.git/**'
     - '.git*'
@@ -51,7 +51,7 @@ obfuscator:
   json_funs:
     # 依据自然顺序排序 Json 键值
     sort: true
-    # 将 Json 键值中的字符串转为 Unicode，尽管是 Ascll 字符。遵循 `excluded_jsonui_names` 和 `excluded_entity_names`
+    # 将 Json 键值中的字符串转为 Unicode，尽管是 Ascll 字符。遵循 `exclude_jsonui_names` 和 `exclude_entity_names`
     unicode: true
     # 在 json 结尾处添加无意义空字典“{}”，不影响游戏解析但可能会影响 IDE 解析
     empty_dict: true
@@ -128,7 +128,7 @@ obfuscator:
   debug: false
 
   # 不进行任何处理的 json
-  excluded_jsons:
+  exclude_jsons:
     - manifest.json
     - "**/loading_messages.json"
     - "**/blocks.json"
@@ -141,14 +141,18 @@ obfuscator:
     - "**/languages.json"
     - "**/splashes.json"
 
+  # 不进行混淆或添加水印的贴图文件名
+  exclude_image_names:
+    - item_cell_rhp
+
   # 不进行混淆、添加注释、转义、去格式化并且将顺序提前的 UI 一级控件、变量、绑定
-  excluded_jsonui_names:
+  exclude_jsonui_names:
     - hotbar_grid_template
     - setting_options_panel
     - chest_label_panel
 
   # 不在实体、模型、粒子、材质、动画、动画控制器、渲染控制器中进行混淆、转义、去格式化的键名和的 ID 及 Molang 变量名
-  excluded_entity_names:
+  exclude_entity_names:
     - number_0
     - number_1
     - number_2
@@ -181,4 +185,3 @@ obfuscator:
     - health_display_hide
     - health_display_baby
     - health_display_controller
-    - item_cell_rhp

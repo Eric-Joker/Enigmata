@@ -40,7 +40,7 @@ class EnigmataConfig:
     HEADER_VERSION = []
     MODULES_UUID = []
     MODULES_VERSION = []
-    EXCLUDED_FILES = (".git*/**", ".mc*", "LICENSE", "README.md")
+    EXCLUDE_FILES = (".git*/**", ".mc*", "LICENSE", "README.md")
     NOMEDIA = True
     ZIP_NAME = []
     NAMESPACE = []
@@ -67,7 +67,7 @@ class EnigmataConfig:
     PACK_COMPRESS = 9
     MTIME = (1989, 8, 10, 11, 45, 14)
     DEBUG = False
-    EXCLUDED_JSONS = (
+    EXCLUDE_JSONS = (
         "manifest.json",
         "**/loading_messages.json",
         "**/blocks.json",
@@ -80,8 +80,9 @@ class EnigmataConfig:
         "**/languages.json",
         "**/splashes.json",
     )
-    EXCLUDED_JSONUI_NAMES = set()
-    EXCLUDED_ENTITY_NAMES = set()
+    EXCLUDE_IMAGE_NAMES = set()
+    EXCLUDE_JSONUI_NAMES = set()
+    EXCLUDE_ENTITY_NAMES = set()
 
     def __init__(self):
         self._add_arguments()
@@ -129,7 +130,7 @@ class EnigmataConfig:
         argsGroup1.add_argument("--modules-version", nargs="*", type=str, help="For manifest.json.")
         argsGroup2 = parser.add_argument_group("Script Parameters")
         argsGroup2.add_argument(
-            "--excluded-files",
+            "--exclude-files",
             nargs="*",
             type=str,
             help="Files in the resource pack directory but not part of the resource pack.",
@@ -159,7 +160,7 @@ class EnigmataConfig:
             "--obfuscate-strs", "-s", nargs="*", type=str, help="Character pool for generating obfuscated strings."
         )
         argsGroup3.add_argument(
-            "--obfuscate-ascll", "-a", nargs="*", type=str, help="Character pool for generating obfuscated strings."
+            "--obfuscate-ascll", "-a", nargs="*", type=str, help="Entity key-value obfuscation charset."
         )
         argsGroup3.add_argument("--sort", type=str2bool, help="Sort JSON keys in natural order.")
         argsGroup3.add_argument(
@@ -204,7 +205,7 @@ class EnigmataConfig:
             "--watermark-paths",
             nargs="*",
             type=str,
-            help="Adds a string randomly split by namespace to all mapping filenames.",
+            help="Watermark targets.",
         )
         argsGroup3.add_argument(
             "--wm-references",
@@ -242,22 +243,28 @@ class EnigmataConfig:
             help="Modify the mtime of each file during packaging.",
         )
         argsGroup3.add_argument(
-            "--excluded-jsons",
+            "--exclude-jsons",
             nargs="*",
             type=str,
             help="Json without any processing.",
         )
         argsGroup3.add_argument(
-            "--excluded-jsonui-names",
+            "--exclude-image-names",
             nargs="*",
             type=str,
-            help="JsonUI first-level control names, variable names, hard-bound names without obfuscation, annotation, escaping, de-formatting, and order advancement.",
+            help="Texture filenames that are not obfuscated or watermarked.",
         )
         argsGroup3.add_argument(
-            "--excluded-entity-names",
+            "--exclude-jsonui-names",
             nargs="*",
             type=str,
-            help="Key names and names of entity series ID, and molang variable names in them that are not obfuscated, escaped, or de-formatted in files.",
+            help="JsonUI first-level control names, variable names, binding names without obfuscation, annotation, escaping, de-formatting, and order advancement.",
+        )
+        argsGroup3.add_argument(
+            "--exclude-entity-names",
+            nargs="*",
+            type=str,
+            help="Key names and names of entity series ID, and molang variable names without obfuscation, escaping, or de-formatting.",
         )
         self.args = parser.parse_args()
 
@@ -327,19 +334,22 @@ class EnigmataConfig:
 
         # typecasting and supplementary attrs
         self.mtime = tuple(self.mtime) if self.mtime else self.MTIME
-        self.excluded_files = tuple(self.excluded_files) if self.excluded_files else self.EXCLUDED_FILES
+        self.exclude_files = tuple(self.exclude_files) if self.exclude_files else self.EXCLUDE_FILES
         self.obfuscate_strs = tuple(self.obfuscate_strs) if self.obfuscate_strs else self.OBFUSCATE_STRS
         self.obfuscate_ascll = tuple(self.obfuscate_ascll) if self.obfuscate_ascll else self.OBFUSCATE_ASCLL
         self.watermark_paths = tuple(self.watermark_paths)
         self.wm_references = tuple(self.wm_references)
         self.obfuscate_paths = tuple(self.obfuscate_paths)
         self.obf_references = tuple(self.obf_references)
-        self.excluded_jsons = tuple(self.excluded_jsons) if self.excluded_jsons else self.EXCLUDED_JSONS
-        self.excluded_jsonui_names = (
-            set(self.excluded_jsonui_names) if self.excluded_jsonui_names else self.EXCLUDED_JSONUI_NAMES
+        self.exclude_jsons = tuple(self.exclude_jsons) if self.exclude_jsons else self.EXCLUDE_JSONS
+        self.exclude_image_names = (
+            set(self.exclude_image_names) if self.exclude_image_names else self.EXCLUDE_IMAGE_NAMES
         )
-        self.excluded_entity_names = (
-            set(self.excluded_entity_names) if self.excluded_entity_names else self.EXCLUDED_ENTITY_NAMES
+        self.exclude_jsonui_names = (
+            set(self.exclude_jsonui_names) if self.exclude_jsonui_names else self.EXCLUDE_JSONUI_NAMES
+        )
+        self.exclude_entity_names = (
+            set(self.exclude_entity_names) if self.exclude_entity_names else self.EXCLUDE_ENTITY_NAMES
         )
         self.additional_jsonui = tuple(self.additional_jsonui) if self.additional_jsonui else self.ADDITIONAL_JSONUI
         self.path = self.path if isinstance(self.path, list) else (self.path,)
@@ -357,9 +367,9 @@ class EnigmataConfig:
             self.unicode = False
             self.sort = False
         self.is_vanilla_data_needed = (self.obfuscate_jsonui or self.obfuscate_entity) and not self.extract
-        self.excluded_jsonui_names.add("namespace")
-        self.excluded_entity_names.update(("player.base", "format_version", "version"))
-        self.excluded_names = self.excluded_jsonui_names | self.excluded_entity_names
+        self.exclude_jsonui_names.add("namespace")
+        self.exclude_entity_names.update(("player.base", "format_version", "version"))
+        self.exclude_names = self.exclude_jsonui_names | self.exclude_entity_names
         uuid_pattern = re.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
         if self.pack_name and len(self.path) != len(self.pack_name):
             raise ValueError("The pack name needs to correspond to the resource package.")

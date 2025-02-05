@@ -87,10 +87,10 @@ class UIs(OBF):
 
     async def async_merge(self):
         control_split_pattern = re.compile(r"[@\.]")
-        excluded_namespace = set()
+        exclude_namespace = set()
 
         def stats_ctrl_name(data: dict, renamed: list):
-            if (ns := data.get("namespace")) not in excluded_namespace:
+            if (ns := data.get("namespace")) not in exclude_namespace:
                 self.uniqueui_namespace.append(ns)
 
                 new_dict = {"namespace": self.namespace}
@@ -103,7 +103,7 @@ class UIs(OBF):
             return new_dict, True
 
         def fix_self_namespace_dict(data: dict, is_control: bool, renamed: list):
-            if (ns := data.get("namespace")) and ns in excluded_namespace:
+            if (ns := data.get("namespace")) and ns in exclude_namespace:
                 return {}, True
             return {fix_self_namespace_str(k, renamed=renamed) if is_control else k: v for k, v in data.items()}, False
 
@@ -146,11 +146,11 @@ class UIs(OBF):
                 data = self.processed[j.path] = await self.async_get_json_data(j)
                 ns = (json.loads(comment_pattern.sub("", data)) if isinstance(data, str) else data)["namespace"]
                 self.uniqueui_namespace.append(ns)
-                excluded_namespace.add(ns)
+                exclude_namespace.add(ns)
 
         # start merge
         merged_dict = {"namespace": self.namespace}
-        excluded_files = set()
+        exclude_files = set()
         for j in self.uniqueuis.copy():
             renamed_controls = []
             data = TraverseJson(partial(stats_ctrl_name, renamed=renamed_controls)).traverse(
@@ -175,11 +175,11 @@ class UIs(OBF):
 
                     self.uniqueuis.remove(j)
                     pbm.revert_t_item(sum((cfg.comment, cfg.empty_dict, cfg.sort, cfg.unicode, cfg.obfuscate_jsonui)))
-                    pbm.update_n_file(1)
-                    pbm.update(1)
+                    pbm.update_n_file()
+                    pbm.update()
                     is_exclude = False
                 else:
-                    pbm.revert_t_item(1)
+                    pbm.revert_t_item()
 
             # TODO: NOT TESTED
             # obfuscate the filenames of files that cannot be merged
@@ -195,7 +195,7 @@ class UIs(OBF):
                     print(f"An error occurred while write json ({new_path}):{e}")
                     self.logger.exception(e)
 
-                excluded_files.add(j.cut)
+                exclude_files.add(j.cut)
                 j.path = os.path.join(rel_dir, new_name)
                 j.processed = True
 
@@ -204,7 +204,7 @@ class UIs(OBF):
 
         # Fix all namespaces for each JsonUI.
         for ns in self.uniqueui_namespace:
-            if ns not in excluded_namespace:
+            if ns not in exclude_namespace:
                 instance = TraverseControls(
                     lambda data, *_: ({fix_all_namespace_str(k, namespace=ns): v for k, v in data.items()}, False),
                     str_fun=partial(fix_all_namespace_str, namespace=ns),
@@ -241,7 +241,7 @@ class UIs(OBF):
                     k: (
                         # TODO: NOT TESTED
                         [
-                            gen_obfstr(i, OBFStrType.OBFFILE) if i in excluded_files else i
+                            gen_obfstr(i, OBFStrType.OBFFILE) if i in exclude_files else i
                             for i in data["ui_defs"]
                             if os.path.splitext(i)[0] not in unique_cuts
                         ]
@@ -263,7 +263,7 @@ class UIs(OBF):
                 self.logger.exception(e)
 
             j.processed = True
-            pbm.update(1)
+            pbm.update()
 
     async def async_obf_ctrl_name(self):
         def stats_ctrl_dict(data: dict, is_control: bool, is_unique=False):
@@ -388,8 +388,8 @@ class UIs(OBF):
                 data = "{}"
             if cfg.obfuscate_jsonui:
                 data = l10n_pattern.sub(repl, data)
-                pbm.update_n_file(1)
-                pbm.update(1)
+                pbm.update_n_file()
+                pbm.update()
             new_dir = os.path.dirname(new_path := os.path.join(self.work_path, l.path))
             try:
                 await async_mkdirs(new_dir)
@@ -413,8 +413,8 @@ class UIs(OBF):
         for j in self.uniqueuis:
             self.processed[j.path] = process.traverse(await self.async_get_json_data(j), exclude=False)
             j.processed = True
-            pbm.update(1)
+            pbm.update()
         for j in self.jsonuis:
             self.processed[j.path] = process.traverse(await self.async_get_json_data(j), exclude=False)
             j.processed = True
-            pbm.update(1)
+            pbm.update()

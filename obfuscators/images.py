@@ -17,6 +17,7 @@ import asyncio
 import os
 import random
 from functools import partial
+from itertools import chain
 
 import aiofiles
 import aioshutil
@@ -25,7 +26,7 @@ from PIL import PngImagePlugin
 
 from config import cfg
 from models import FileHandler, OBFStrType, pbm
-from utils import TraverseJson, async_mkdirs, async_pil_dump, async_pil_load, gen_obfstr
+from utils import async_mkdirs, async_pil_dump, async_pil_load, gen_obfstr
 
 from . import OBF
 
@@ -44,70 +45,79 @@ class Images(OBF):
         self.pngs = pngs
         self.tgas = tgas
 
-        for item in renames + obf_names:
-            need_obf = item in obf_names
-            # If the filenames of the subpack are different from those of the main pack, it will lead to a decrease in resource pack performance.
-            (rd := random.Random()).seed(
-                item.path if await self._async_check_sub_ref(item, texture_jsons_2 if need_obf else texture_jsons) else item.cut
-            )
-            name, ext = os.path.splitext(os.path.basename(item.path))
-
-            if item in obf_names:
-                new_name = gen_obfstr(name, OBFStrType.OBFFILE) + ext
+        for file, need_obf in chain(((x, False) for x in renames), ((x, True) for x in obf_names)):
+            name, ext = os.path.splitext(os.path.basename(file.path))
+            if name in cfg.exclude_image_names:
+                new_dir = os.path.join(self.work_path, os.path.dirname(file.path))
+                new_path = os.path.join(self.work_path, file.path)
+                pbm.revert_t_item()
             else:
-                # insert string
-                len1 = len(self.namespace)
-                if (len2 := len(name)) == 1:
-                    return self.namespace[: (insert_position := rd.randint(0, len1))] + name + self.namespace[insert_position:]
-                insert_positions = sorted(rd.sample(range(len1 + len2), len1))
-                result, char1_index, char2_index = [], 0, 0
-                for i in range(len1 + len2):
-                    if char1_index < len1 and i == insert_positions[char1_index]:
-                        result.append(self.namespace[char1_index])
-                        char1_index += 1
-                    else:
-                        result.append(name[char2_index])
-                        char2_index += 1
-                new_name = "".join(result) + ext
+                # If the filenames of the subpack are different from those of the main pack, it will lead to a decrease in resource pack performance.
+                (rd := random.Random()).seed(
+                    file.path
+                    if await self._async_check_sub_ref(file, texture_jsons_2 if need_obf else texture_jsons)
+                    else file.cut
+                )
+                if need_obf:
+                    new_name = gen_obfstr(name, OBFStrType.OBFFILE) + ext
+                else:
+                    # insert string
+                    len1 = len(self.namespace)
+                    if (len2 := len(name)) == 1:
+                        insert_position = rd.randint(0, len1)
+                        return self.namespace[:insert_position] + name + self.namespace[insert_position:]
+                    insert_positions = sorted(rd.sample(range(len1 + len2), len1))
+                    result, char1_index, char2_index = [], 0, 0
+                    for i in range(len1 + len2):
+                        if char1_index < len1 and i == insert_positions[char1_index]:
+                            result.append(self.namespace[char1_index])
+                            char1_index += 1
+                        else:
+                            result.append(name[char2_index])
+                            char2_index += 1
+                    new_name = "".join(result) + ext
+                new_path = os.path.join(new_dir := os.path.join(self.work_path, os.path.dirname(file.path)), new_name)
+                OBFStrType.FILENAME.bi_map[file.path.replace("\\", "/")] = os.path.join(
+                    os.path.dirname(file.path), new_name
+                ).replace("\\", "/")
+                pbm.update()
 
-            new_path = os.path.join(new_dir := os.path.join(self.work_path, os.path.dirname(item.path)), new_name)
-            old_path = os.path.join(self.pack_path, item.path)
+            old_path = os.path.join(self.pack_path, file.path)
             try:
                 await async_mkdirs(new_dir)
                 await aioshutil.copy2(old_path, new_path)
             except Exception as e:
                 print(f"An error occurred while rename image ({new_path}):{e}")
                 self.logger.exception(e)
-            (
+            if ext == ".png":
                 self.pngs.append(FileHandler(new_path, processed=True))
-                if ext == ".png"
-                else self.tgas.append(FileHandler(new_path, processed=True))
-            )
-            OBFStrType.FILENAME.bi_map[item.path.replace("\\", "/")] = os.path.join(
-                os.path.dirname(item.path), new_name
-            ).replace("\\", "/")
-
-            pbm.update(1)
+            else:
+                self.tgas.append(FileHandler(new_path, processed=True))
 
         # rename the JSON files to match the names of the image files.
         for j in image_jsons:
-            new_dir = os.path.join(self.work_path, (rel_dir := os.path.dirname(j.path)))
-            path = os.path.splitext(j.path)[0].replace("\\", "/")
-            new_name = os.path.splitext(
-                os.path.basename(OBFStrType.FILENAME.bi_map.get(f"{path}.png") or OBFStrType.FILENAME.bi_map.get(f"{path}.tga"))
-            )[0]
-            new_path = os.path.join(new_dir, f"{new_name}.json")
-            old_path = os.path.join(self.pack_path, j.path)
-            try:
-                await async_mkdirs(new_dir)
-                await aioshutil.copy2(old_path, new_path)
-            except Exception as e:
-                print(f"An error occurred while rename json ({new_path}):{e}")
-                self.logger.exception(e)
+            if os.path.splitext(os.path.basename(j.path))[0] in cfg.exclude_image_names:
+                pbm.revert_t_item()
+            else:
+                new_dir = os.path.join(self.work_path, (rel_dir := os.path.dirname(j.path)))
+                path = os.path.splitext(j.path)[0].replace("\\", "/")
+                new_name = os.path.splitext(
+                    os.path.basename(
+                        OBFStrType.FILENAME.bi_map.get(f"{path}.png") or OBFStrType.FILENAME.bi_map.get(f"{path}.tga")
+                    )
+                )[0]
+                new_path = os.path.join(new_dir, f"{new_name}.json")
+                old_path = os.path.join(self.pack_path, j.path)
+                try:
+                    await async_mkdirs(new_dir)
+                    await aioshutil.copy2(old_path, new_path)
+                except Exception as e:
+                    print(f"An error occurred while rename json ({new_path}):{e}")
+                    self.logger.exception(e)
 
-            j.path = os.path.join(rel_dir, f"{new_name}.json")
-            j.processed = True
-            pbm.update(1)
+                j.path = os.path.join(rel_dir, f"{new_name}.json")
+                j.processed = True
+                pbm.update()
 
         # fix jsons
         def repl(match: re.Match, subp):
@@ -128,9 +138,7 @@ class Images(OBF):
             return data
 
         subp_pattern = re.compile(r"[/\\]?(subpacks[/\\].+?)[/\\]")
-        value_pattern = re.compile(
-            r'(?<=(?<!//.*|/\*[\s\S]*?(?!\*/)\s*)".+?"(?:\s*/\*[\s\S]*?\*/\s*|\s*)(?<!//.*):(?:\s*/\*[\s\S]*?\*/\s*|\s*)(?<!//.*)").*?(?=")'
-        )
+        value_pattern = re.compile(r'(?<=(?<!//.*|/\*[\s\S]*(?!\*/))(?::|,|\[)(?:\s*/\*[\s\S]*\*/)*\s*(?<!//.*)").*?(?=")')
         for file in texture_jsons + texture_jsons_2:
             path = os.path.join(self.pack_path, file.path)
             try:
@@ -152,7 +160,7 @@ class Images(OBF):
                 self.logger.exception(e)
 
             file.processed = True
-            pbm.update(1)
+            pbm.update()
 
     async def async_obf(self):
         await asyncio.gather(self.async_png(), self.async_tga())
@@ -175,7 +183,7 @@ class Images(OBF):
                 pnginfo=metadata if cfg.extrainfo else None,
             )
 
-            pbm.update_n_file(1)
+            pbm.update_n_file()
             pbm.update(sum((cfg.image_compress != -1, cfg.extrainfo)))
 
     async def async_tga(self):
@@ -189,7 +197,7 @@ class Images(OBF):
                 id_section=self.namespace.encode("utf-8") if cfg.extrainfo else b"",
             )
 
-            pbm.update_n_file(1)
+            pbm.update_n_file()
             pbm.update(sum((cfg.image_compress > 6, cfg.extrainfo)))
 
     async def _async_check_sub_ref(self, item: FileHandler, jsons: list[FileHandler]):

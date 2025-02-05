@@ -13,12 +13,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-import itertools
 import json
 import os
 import random
 import time
 import uuid
+from itertools import chain
 from typing import Any
 
 import aiofiles
@@ -36,15 +36,15 @@ from . import OBF
 class Jsons(OBF):
     async def async_obf(self, *args: list[FileHandler]):
         self.comment_pattern = re.compile(r'(?<="[^"]*"):(?=\s*[^",\{\[]|".*?[^"]*")')
-        update_pbar = lambda: None if is_merged else pbm.update(1)
+        update_pbar = lambda: None if is_merged else pbm.update()
 
-        for j in itertools.chain(*args):
+        for j in chain(*args):
             path = os.path.join(self.work_path if j.processed else self.pack_path, j.path)
             new_dir = os.path.dirname(new_path := os.path.join(self.work_path, j.path))
             is_merged = j.path == cfg.merged_ui_path or "MERGED" in OBFStrType.OBFFILE.bi_map.backward.get(
                 os.path.splitext(os.path.basename(j.path))[0], ""
             )
-            if glob.globmatch(j.path, cfg.excluded_jsons, flags=glob.D | glob.G):
+            if glob.globmatch(j.path, cfg.exclude_jsons, flags=glob.D | glob.G):
                 if not j.processed:
                     await async_mkdirs(new_dir)
                     await aioshutil.copy2(path, new_path)
@@ -68,9 +68,9 @@ class Jsons(OBF):
                 if not cfg.unformat:
                     data = default_dumps(json.loads(data) if isinstance(data, str) else data, indent=2)
                 if cfg.empty_dict:
-                    if any(s in str(data) for s in cfg.excluded_entity_names):
+                    if any(s in str(data) for s in cfg.exclude_entity_names):
                         if not is_merged:
-                            pbm.revert_t_item(1)
+                            pbm.revert_t_item()
                     else:
                         data = (data if isinstance(data, str) else default_dumps(data)) + "{}"
                         update_pbar()
@@ -86,15 +86,15 @@ class Jsons(OBF):
                     self.logger.exception(e)
 
             if not is_merged:
-                pbm.update_n_file(1)
+                pbm.update_n_file()
         pbm.pbar.refresh()
 
     def is_exclude(self, data: str, plus=True):
         return (
             plus
-            and data in cfg.excluded_names
-            or data.partition("@")[0] in cfg.excluded_jsonui_names
-            or any(".".join(data[-len(s.split(".")) :]) == s for s in cfg.excluded_entity_names)
+            and data in cfg.exclude_names
+            or data.partition("@")[0] in cfg.exclude_jsonui_names
+            or any(".".join(data[-len(s.split(".")) :]) == s for s in cfg.exclude_entity_names)
         )
 
     def encode_to_unicode(self, data):
@@ -126,7 +126,7 @@ class Jsons(OBF):
             return new_dict, stop
 
         def process_str(data: str, *_):
-            return data if data in cfg.excluded_names else "".join([rf"\u{ord(c):04x}" for c in data])
+            return data if data in cfg.exclude_names else "".join([rf"\u{ord(c):04x}" for c in data])
 
         return TraverseJson(process_dict, str_fun=process_str).traverse(data)
 
@@ -220,5 +220,5 @@ class Jsons(OBF):
         except Exception as e:
             print(f"An error occurred while writing json ({new_path}):{e}")
             self.logger.exception(e)
-        pbm.update_n_file(1)
-        pbm.update(1)
+        pbm.update_n_file()
+        pbm.update()
