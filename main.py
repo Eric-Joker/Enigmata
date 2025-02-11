@@ -84,8 +84,13 @@ def main():
         != (len(cfg.path) if isinstance(cfg.path, list) else 1)
     ):
         raise ValueError("The namespace needs to correspond to the resource package.")
-    if (cfg.obfuscate_jsonui or cfg.obfuscate_entity) and len(cfg.obfuscate_strs) < 1:
-        raise ValueError("At least one set of obfuscated strings.")
+    if (cfg.obfuscate_jsonui or cfg.obfuscate_entity):
+        if len(cfg.obfuscate_strs) < 1:
+            raise ValueError("At least one set of obfuscated strings.")
+        if not any(any(s.isascii() for s in p) for p in cfg.obfuscate_strs):
+            raise ValueError("No ASCII characters present in obfuscate_strs.")
+        if any(any(not s.isascii() for s in p) for p in cfg.obfuscate_ascll):
+            raise ValueError("obfuscate_ascll must be full of ascll characters.")
 
     try:
         asyncio.run(async_start_obf(cfg))

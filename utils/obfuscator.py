@@ -198,6 +198,10 @@ def gen_obfstr(data: str, enum: OBFStrType, link=0):
         enum.bi_map[data] = (rdstr := rd.choice(available_items))
         return rdstr
 
+    need_ascll = enum in ENUM_LINKS[0]
+    ascll_pool = (
+        tuple(tuple(s for s in p if s.isascii() and not ("0" <= s <= "9")) for p in cfg.obfuscate_strs) if need_ascll else None
+    )
     str_pool = cfg.obfuscate_ascll if enum in ENUM_LINKS[1] else cfg.obfuscate_strs
     long = 2
     times = 0
@@ -211,8 +215,13 @@ def gen_obfstr(data: str, enum: OBFStrType, link=0):
         long = long if factor == 1 else next(i for i in range(long, computed) if len(enum.bi_map) < factor**i)
 
         # gen
-        rdstr = "".join(rd.choices(rd.choice(tuple(str_pool)), k=long)) * rd.randint(1, 3)
-        if (rdstr in enum.bi_map.backward or ("0" <= rdstr[0] <= "9")) and long < computed:
+        pool_index = rd.randint(0, len(str_pool) - 1)
+        rdstr = (
+            (rd.choices(ascll_pool[pool_index])[0] + "".join(rd.choices(str_pool[pool_index], k=long - 1)))
+            if need_ascll
+            else ("".join(rd.choices(str_pool[pool_index], k=long)))
+        ) * rd.randint(1, 3)
+        if (rdstr in enum.bi_map.backward) and long < computed:
             times += 1
             if all(c == data[0] for c in data):
                 rd.seed(data * rd.randint(1, 3))

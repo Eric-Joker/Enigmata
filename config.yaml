@@ -46,7 +46,7 @@ obfuscator:
   # 用于生成实体系文件键值混淆后字符串的字符
   # 必须全是 Ascll 字符
   obfuscate_ascll:
-    - 'abcdefghijklmn'
+    - 'abcdefg'
 
   json_funs:
     # 依据自然顺序排序 Json 键值
