@@ -31,7 +31,6 @@ Enigmata 是一款开源的 Minecraft Bedrock Edition 资源包混淆器，在�
 
 此混淆器适用的资源包具有一些限制，其实解决绝大部分限制并不算困难，但是因为我用不到所以不想做，欢迎 [Pull Request](https://github.com/Eric-Joker/Enigmata/pulls)。
 
-- 不支持行为包
 - JsonUI 混淆功能只会混淆在单独文件夹下的所有 json 文件里的控件。举例：
 
   ```

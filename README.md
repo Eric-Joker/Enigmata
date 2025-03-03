@@ -31,7 +31,6 @@ Enigmata is an open-source resource pack obfuscator for Minecraft Bedrock Editio
 
 This obfuscator has some limitations regarding the RP it supports. Most of these limitations are not difficult to resolve, but since I do not need them. [Pull requests](https://github.com/Eric-Joker/Enigmata/pulls) are welcome.
 
-- NOT ADDON
 - The JsonUI obfuscation feature will only obfuscate the controls in all JSON files within a specific folder. eg:
 
   ```

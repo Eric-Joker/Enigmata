@@ -13,7 +13,7 @@ log:
 
 packs:
   # 需要处理的资源包目录
-  # 若需使用 png 压缩功能，路径中请勿包含非 Ascll 字符
+  # 若需使用 png 压缩功能，路径中请勿包含非 ascii 字符
   path: 'F:\.minecraft_bedrock\installations\Eric Joker\Latest Release\packageData\development_resource_packs\hsdzh'
   # 最终打包后的文件名，需与 path 一一对应
   # 为空则不自动打包
@@ -44,14 +44,14 @@ obfuscator:
     #- '0OoΟο○０Ｏｏ'
 
   # 用于生成实体系文件键值混淆后字符串的字符
-  # 必须全是 Ascll 字符
-  obfuscate_ascll:
+  # 必须全是 ascii 字符
+  obfuscate_ascii:
     - 'abcdefg'
 
   json_funs:
     # 依据自然顺序排序 Json 键值
     sort: true
-    # 将 Json 键值中的字符串转为 Unicode，尽管是 Ascll 字符。遵循 `exclude_jsonui_names` 和 `exclude_entity_names`
+    # 将 Json 键值中的字符串转为 Unicode，尽管是 ascii 字符。遵循 `exclude_jsonui_names` 和 `exclude_entity_names`
     unicode: true
     # 在 json 结尾处添加无意义空字典“{}”，不影响游戏解析但可能会影响 IDE 解析
     empty_dict: true

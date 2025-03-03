@@ -89,8 +89,8 @@ def main():
             raise ValueError("At least one set of obfuscated strings.")
         if not any(any(s.isascii() for s in p) for p in cfg.obfuscate_strs):
             raise ValueError("No ASCII characters present in obfuscate_strs.")
-        if any(any(not s.isascii() for s in p) for p in cfg.obfuscate_ascll):
-            raise ValueError("obfuscate_ascll must be full of ascll characters.")
+        if any(any(not s.isascii() for s in p) for p in cfg.obfuscate_ascii):
+            raise ValueError("obfuscate_ascii must be full of ascii characters.")
 
     try:
         asyncio.run(async_start_obf(cfg))

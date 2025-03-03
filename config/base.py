@@ -46,7 +46,7 @@ class EnigmataConfig:
     NAMESPACE = []
     VANILLA_DATA = ""
     OBFUSCATE_STRS = ("IlＩｌ｜", "0Oo°Οο⁰₀○。〇︒０Ｏｏ")
-    OBFUSCATE_ASCLL = "abcdefghijklmnopqrstuvwxyz"
+    OBFUSCATE_ascii = "abcdefghijklmnopqrstuvwxyz"
     SORT = True
     UNICODE = True
     EMPTY_DICT = True
@@ -160,7 +160,7 @@ class EnigmataConfig:
             "--obfuscate-strs", "-s", nargs="*", type=str, help="Character pool for generating obfuscated strings."
         )
         argsGroup3.add_argument(
-            "--obfuscate-ascll", "-a", nargs="*", type=str, help="Entity key-value obfuscation charset."
+            "--obfuscate-ascii", "-a", nargs="*", type=str, help="Entity key-value obfuscation charset."
         )
         argsGroup3.add_argument("--sort", type=str2bool, help="Sort JSON keys in natural order.")
         argsGroup3.add_argument(
@@ -336,7 +336,7 @@ class EnigmataConfig:
         self.mtime = tuple(self.mtime) if self.mtime else self.MTIME
         self.exclude_files = tuple(self.exclude_files) if self.exclude_files else self.EXCLUDE_FILES
         self.obfuscate_strs = tuple(self.obfuscate_strs) if self.obfuscate_strs else self.OBFUSCATE_STRS
-        self.obfuscate_ascll = tuple(self.obfuscate_ascll) if self.obfuscate_ascll else self.OBFUSCATE_ASCLL
+        self.obfuscate_ascii = tuple(self.obfuscate_ascii) if self.obfuscate_ascii else self.OBFUSCATE_ascii
         self.watermark_paths = tuple(self.watermark_paths)
         self.wm_references = tuple(self.wm_references)
         self.obfuscate_paths = tuple(self.obfuscate_paths)

@@ -58,7 +58,7 @@ obfuscator:
 
   # Entity series keys/values obfuscation character set
   # Must be all ASCII characters.
-  obfuscate_ascll:
+  obfuscate_ascii:
     - 'abcdefghijklmn'
 
   json_funs:
