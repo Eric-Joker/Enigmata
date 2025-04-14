@@ -2,7 +2,7 @@
 data_path: './data'
 # 输出结果的路径
 work_path: './output'
-vanillas_path: 'F:\.minecraft_bedrock\versions\f1d6a02f-046a-4907-a3d7-88a3b59c70d2\data\resource_packs'
+vanillas_path: 'F:\.minecraft_bedrock\versions\618f3ac5-5baf-4101-9056-3d35cc357f4b\data\resource_packs'
 # 指定提取后的原版游戏资源包数据，为空字符串则尝试自动选择
 # vanilla_data: 
 
@@ -80,7 +80,7 @@ obfuscator:
   file_funs:
     # 对 `paths` 中所有原版不具有的贴图文件的文件名添加由 `namespace` 随机分割的字符串
     filename_watermark:
-      enable: true
+      enable: false
       paths:
         - '**/textures/blocks/**'
         - '**/textures/items/**'
@@ -92,7 +92,7 @@ obfuscator:
     # 将 `paths` 中所有原版不具有的贴图文件的文件名替换为由 `obfuscate_str` 随机生成的字符串
     # 如果 `filename_watermark` 为 true，自动排除 `filename_watermark.paths`
     filename_obfuscation:
-      enable: true
+      enable: false
       paths:
         - '**/textures/ui/**'
         - '**/textures/number/**'

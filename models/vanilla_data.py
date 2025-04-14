@@ -87,13 +87,12 @@ class VanillaData:
                 pause(
                     "The vanilla data file is too old, and can't generate it because can't read the original game resource packs directory. Press any key to start the obfuscation."
                 )
-        else:
-            try:
-                with open(cfg.vanilla_data, "rb") as f:
-                    self.pkl = pickle.load(f)
-            except Exception as e:
-                print(f"An error occurred while loading Vanilla Data file ({cfg.vanilla_data}):{e}")
-                self.logger.exception(e)
+        try:
+            with open(cfg.vanilla_data, "rb") as f:
+                self.pkl = pickle.load(f)
+        except Exception as e:
+            print(f"An error occurred while loading Vanilla Data file ({cfg.vanilla_data}):{e}")
+            self.logger.exception(e)
 
     async def async_extract(self):
         dag = DAG()
