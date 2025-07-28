@@ -2,7 +2,7 @@
 data_path: './data'
 # 输出结果的路径
 work_path: './output'
-vanillas_path: 'F:\.minecraft_bedrock\versions\618f3ac5-5baf-4101-9056-3d35cc357f4b\data\resource_packs'
+vanillas_path: 'F:\.minecraft_bedrock\versions\fcc1d727-bc59-40d1-b4e8-1591817179ff\data\resource_packs'
 # 指定提取后的原版游戏资源包数据，为空字符串则尝试自动选择
 # vanilla_data: 
 
